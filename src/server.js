@@ -12,11 +12,14 @@ const url = "https://api.mysportsfeeds.com/v2.0/pull/nfl/2018-regular/week/4/gam
 
 //********************************************
 
-const weekFinder = () => {
+const timeObjMaker = () => {
 	const currentTime = new Date;
-	let currentMonth = currentTime.getMonth() + 1;
-	let currentDate = currentTime.getDate();
-
+	const timeObj = {
+    month: currentTime.getMonth() + 1,
+    day: currentTime.getDate(),
+    year: currentTime.getFullYear()
+  }
+  return timeObj
 }
 
 
@@ -31,8 +34,6 @@ const mySportsFeedsApiCall = async (query) => {
 		return console.err(error)
 	}
 }
-
-
 
 //********************************************
 
