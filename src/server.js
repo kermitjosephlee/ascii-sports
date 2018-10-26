@@ -22,23 +22,15 @@ const queryUrlBuilder = url => {
   const dayOfWeek = moment().day()
 
   const seasonType = () => {
-    if (moment().get('year') === 2018){
-      return "regular"
-    } else if (moment().get('year') === 2019){
-      return "playoff"
-    }
+    return (moment().get('year') === 2018) ? "regular"
+      : ("playoff")
   }
 
   const weekNumberBuilder = () => {
-    if (currentNFLYear === 2018 && dayOfWeek > 3) {
-      return moment().get('week') - 35;
-    } else if (currentNFLYear === 2018 && dayOfWeek <= 3) {
-      return moment().get('week') - 36;
-    } else if (currentNFLYear === 2019 && dayOfWeek > 3) {
-      return moment().get('week') + 1
-    } else if (currentNFLYear === 2019 && dayOfWeek <=3){
-      return moment().get('week')
-    }
+    return (currentNFLYear === 2018 && dayOfWeek > 3) ? (moment().get('week') - 35)
+      : (currentNFLYear === 2018 && dayOfWeek <= 3) ? (moment().get('week') - 36)
+      : (currentNFLYear === 2019 && dayOfWeek > 3) ? (moment().get('week') + 1)
+      : (moment().get('week'));
   }
 
   let weekObj = {
@@ -51,14 +43,17 @@ const queryUrlBuilder = url => {
 
 //********************************************
 
-const asciiMapper = apiObj => {
-	console.log(`+---------------+`)
-	console.log(`| ${awayTeam} ` + `${awayScore} ` + `${quarterNumber}qtr  |`)
-	console.log(`| ${homeTeam} ` + `${homeScore} ` + `${downNumber} & ${yardsRemaining}  |`)
-	console.log(`+---------------+`)
-}
+const asciiMapper = ({ games }) => {
+  games.forEach(gameHandler)
+};
 
-//********************************************
+const gameHandler = game => {
+  console.log(`+---------------+`)
+  console.log((game.schedule.awayTeam.abbreviation.length === 2 ? game.schedule.awayTeam.abbreviation + "   " : game.schedule.awayTeam.abbreviation + "  ")
+  + (game.score.awayScoreTotal === null ? "0" : game.score.awayScoreTotal))
+  console.log((game.schedule.homeTeam.abbreviation.length === 2 ? game.schedule.homeTeam.abbreviation + "   " : game.schedule.homeTeam.abbreviation + "  ")
+  + (game.score.homeScoreTotal === null ? "0" : game.score.homeScoreTotal))
+}
 
 let query = rp.get(queryUrlBuilder(url), {
   "auth": {
@@ -70,11 +65,9 @@ let query = rp.get(queryUrlBuilder(url), {
 
 const mySportsFeedsApiCall = async (query) =>{
   try {
-    apiObj = await rp(query)
-		apiObj = JSON.parse(apiObj)
-		console.log(apiObj.games[1])
-		console.log(moment(apiObj.games[0].schedule.startTime).format("dddd"))
-    return apiObj
+    let result = await rp(query)
+    asciiMapper(JSON.parse(result));
+    return result
   }
   catch (e){
     return console.error("*** ERROR ***",e)
