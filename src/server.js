@@ -11,8 +11,6 @@ const morgan = require('morgan');
 const apiKey = process.env.API_KEY;
 const password = process.env.PASSWORD;
 
-let apiObj = {};
-
 app.set("view engine", "ejs");
 
 //********************************************
