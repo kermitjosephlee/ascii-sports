@@ -75,12 +75,12 @@ const teamsWithByesPrinter = teamsWithByes => {
   return teamsWithByes.map(x => x.abbreviation).toString()
 }
 
-const possessionArrowHome = (possession, homeTeam) => {
-  return (possession === homeTeam ? String.fromCharCode(187) : "")
+const possessionAway = (possession, awayTeam) => {
+  return (possession === awayTeam ? String.fromCharCode(187) : " ")
 }
 
-const possessionArrowAway = (possession, awayTeam) => {
-  return (possession === awayTeam ? String.fromCharCode(187) : "")
+const possessionHome = (possession, homeTeam) => {
+  return (possession === homeTeam ? String.fromCharCode(187) : " ")
 }
 
 const gameHandler = game => {
@@ -96,8 +96,8 @@ const gameHandler = game => {
   const possession = game.score.teamInPossession;
 
   console.log(`+-------------------+`)
-  console.log("  " + possessionArrowAway(possession, awayTeam) + " " + (nameLengthChecker(awayTeam)) + scoreChecker(awayScore) + "   " + activeGameChecker(gameStatus, gameTime))
-  console.log("  " + possessionArrowHome(possession, homeTeam) + " " + (nameLengthChecker(homeTeam)) + scoreChecker(homeScore) + "   " + downAndYardsMaker(currentDown, yardsRemaining))
+  console.log(" " + possessionAway(possession, awayTeam) + " " + (nameLengthChecker(awayTeam)) + scoreChecker(awayScore) + "   " + activeGameChecker(gameStatus, gameTime))
+  console.log(" " + possessionHome(possession, homeTeam) + " " + (nameLengthChecker(homeTeam)) + scoreChecker(homeScore) + "   " + downAndYardsMaker(currentDown, yardsRemaining))
 }
 
 let query = rp.get(queryUrlBuilder(url), {
@@ -125,7 +125,7 @@ mySportsFeedsApiCall(query)
 app.use(morgan('combined'))
 
 app.get("/", (req, res) => {
-	res.send();
+	res.send(mySportsFeedsApiCall(query));
 	}
 )
 
