@@ -6,7 +6,7 @@ const https = require('https');
 const url = "https://api.mysportsfeeds.com/v2.0/pull/nfl"
 const request = require('request');
 const rp = require('request-promise');
-const moment = require('moment-holiday')
+const moment = require('moment')
 const morgan = require('morgan');
 const apiKey = process.env.API_KEY;
 const password = process.env.PASSWORD;
@@ -28,7 +28,7 @@ const queryUrlBuilder = url => {
     return (currentNFLYear === 2018 && dayOfWeek > 3) ? (moment().get('week') - 35)
       : (currentNFLYear === 2018 && dayOfWeek <= 3) ? (moment().get('week') - 36)
       : (currentNFLYear === 2019 && dayOfWeek > 3) ? (moment().get('week') + 1)
-      : (moment().get('week'));
+      : (moment().get('week') + 1);
   }
 
   let weekObj = {
@@ -41,16 +41,63 @@ const queryUrlBuilder = url => {
 
 //********************************************
 
-const asciiMapper = ({ games }) => {
+const asciiMapper = ({ games, teamsWithByes }) => {
   games.forEach(gameHandler)
+  console.log(`+-------------------+`)
+  console.log("On Byes: ", teamsWithByesPrinter(teamsWithByes))
 };
 
+const nameLengthChecker = name => {
+  if (name === "LA") {
+   return "LAR  "
+ }
+  return (name.length === 2 ? name + "   " : name + "  ")
+}
+
+const scoreChecker = score => {
+  return (score === null ? " 0" : score)
+}
+
+const activeGameChecker = (gameStatus, gameTime) => {
+  return (gameStatus === "UNPLAYED") ? (gameDateMaker(gameTime))
+    : "F"
+}
+
+const gameDateMaker = date => {
+  return moment(date).format('ddd ha').toLowerCase()
+}
+
+const downAndYardsMaker = (currentDown, yardsRemaining) => {
+  return (currentDown !== null ? `${currentDown} & ${yardsRemaining}` : "")
+}
+
+const teamsWithByesPrinter = teamsWithByes => {
+  return teamsWithByes.map(x => x.abbreviation).toString()
+}
+
+const possessionArrowHome = (possession, homeTeam) => {
+  return (possession === homeTeam ? String.fromCharCode(187) : "")
+}
+
+const possessionArrowAway = (possession, awayTeam) => {
+  return (possession === awayTeam ? String.fromCharCode(187) : "")
+}
+
 const gameHandler = game => {
-  console.log(`+---------------+`)
-  console.log((game.schedule.awayTeam.abbreviation.length === 2 ? game.schedule.awayTeam.abbreviation + "   " : game.schedule.awayTeam.abbreviation + "  ")
-  + (game.score.awayScoreTotal === null ? "0" : game.score.awayScoreTotal))
-  console.log((game.schedule.homeTeam.abbreviation.length === 2 ? game.schedule.homeTeam.abbreviation + "   " : game.schedule.homeTeam.abbreviation + "  ")
-  + (game.score.homeScoreTotal === null ? "0" : game.score.homeScoreTotal))
+  const awayTeam = game.schedule.awayTeam.abbreviation;
+  const homeTeam = game.schedule.homeTeam.abbreviation;
+  const awayScore = game.score.awayScoreTotal;
+  const homeScore = game.score.homeScoreTotal;
+  const gameStatus = game.schedule.playedStatus;
+  const gameTime = game.schedule.startTime;
+  const currentDown = game.score.currentDown;
+  const yardsRemaining = game.score.currentYardsRemaining;
+  const scrimmage = game.score.lineOfScrimmage;
+  const possession = game.score.teamInPossession;
+
+  console.log(`+-------------------+`)
+  console.log("  " + possessionArrowAway(possession, awayTeam) + " " + (nameLengthChecker(awayTeam)) + scoreChecker(awayScore) + "   " + activeGameChecker(gameStatus, gameTime))
+  console.log("  " + possessionArrowHome(possession, homeTeam) + " " + (nameLengthChecker(homeTeam)) + scoreChecker(homeScore) + "   " + downAndYardsMaker(currentDown, yardsRemaining))
 }
 
 let query = rp.get(queryUrlBuilder(url), {
@@ -65,7 +112,6 @@ const mySportsFeedsApiCall = async (query) =>{
   try {
     let result = await rp(query)
     asciiMapper(JSON.parse(result));
-    return result
   }
   catch (e){
     return console.error("*** ERROR ***",e)
