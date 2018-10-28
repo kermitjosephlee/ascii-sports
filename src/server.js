@@ -55,11 +55,14 @@ const nameLengthChecker = name => {
 }
 
 const scoreChecker = score => {
-  return (score === null ? " 0" : score)
+  return (score === null) ? " 0"
+    : (score.toString().length === 1) ? (" " + score)
+    : score
 }
 
-const activeGameChecker = (gameStatus, gameTime) => {
-  return (gameStatus === "UNPLAYED") ? (gameDateMaker(gameTime))
+const activeGameChecker = (gameStatus, startTime, currentQuarter, currentQuarterSecondsRemaining) => {
+  return (gameStatus === "UNPLAYED") ? (gameDateMaker(startTime))
+    : (gameStatus === "LIVE") ? (currentQuarter + "Q" + "  " + moment(currentQuarterSecondsRemaining).format('sss, mm:ss'))
     : "F"
 }
 
@@ -94,6 +97,8 @@ const gameHandler = game => {
     score: {
       awayScoreTotal,
       homeScoreTotal,
+      currentQuarter,
+      currentQuarterSecondsRemaining,
       currentDown,
       currentYardsRemaining,
       lineOfScrimmage,
@@ -102,7 +107,7 @@ const gameHandler = game => {
   } = game
 
   console.log(`+-------------------+`)
-  console.log(" " + possessionAway(teamInPossession, awayTeam) + " " + (nameLengthChecker(awayTeam)) + scoreChecker(awayScoreTotal) + "   " + activeGameChecker(playedStatus, startTime))
+  console.log(" " + possessionAway(teamInPossession, awayTeam) + " " + (nameLengthChecker(awayTeam)) + scoreChecker(awayScoreTotal) + "   " + activeGameChecker(playedStatus, startTime, currentQuarter, currentQuarterSecondsRemaining))
   console.log(" " + possessionHome(teamInPossession, homeTeam) + " " + (nameLengthChecker(homeTeam)) + scoreChecker(homeScoreTotal) + "   " + downAndYardsMaker(currentDown, currentYardsRemaining))
 }
 
