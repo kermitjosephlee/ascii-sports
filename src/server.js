@@ -8,6 +8,7 @@ const request = require('request');
 const rp = require('request-promise');
 const moment = require('moment')
 const morgan = require('morgan');
+const Table = require('cli-table')
 const apiKey = process.env.API_KEY;
 const password = process.env.PASSWORD;
 
@@ -123,7 +124,7 @@ const gameHandler = game => {
     }
   } = game
 
-  console.log(`+----------------------+`)
+
   console.log(" " + possessionAway(teamInPossession, awayTeam) + " " + (nameLengthChecker(awayTeam)) + scoreChecker(awayScoreTotal) + "   " + activeGameChecker(playedStatus, startTime, currentQuarter, currentQuarterSecondsRemaining))
   console.log(" " + possessionHome(teamInPossession, homeTeam) + " " + (nameLengthChecker(homeTeam)) + scoreChecker(homeScoreTotal) + "   " + downAndYardsMaker(currentDown, currentYardsRemaining))
 }
