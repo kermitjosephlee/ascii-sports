@@ -84,20 +84,26 @@ const possessionHome = (possession, homeTeam) => {
 }
 
 const gameHandler = game => {
-  const awayTeam = game.schedule.awayTeam.abbreviation;
-  const homeTeam = game.schedule.homeTeam.abbreviation;
-  const awayScore = game.score.awayScoreTotal;
-  const homeScore = game.score.homeScoreTotal;
-  const gameStatus = game.schedule.playedStatus;
-  const gameTime = game.schedule.startTime;
-  const currentDown = game.score.currentDown;
-  const yardsRemaining = game.score.currentYardsRemaining;
-  const scrimmage = game.score.lineOfScrimmage;
-  const possession = game.score.teamInPossession;
+  const {
+    schedule: {
+      awayTeam: { abbreviation: awayTeam },
+      homeTeam: { abbreviation: homeTeam },
+      playedStatus,
+      startTime
+    },
+    score: {
+      awayScoreTotal,
+      homeScoreTotal,
+      currentDown,
+      currentYardsRemaining,
+      lineOfScrimmage,
+      teamInPossession
+    }
+  } = game
 
   console.log(`+-------------------+`)
-  console.log(" " + possessionAway(possession, awayTeam) + " " + (nameLengthChecker(awayTeam)) + scoreChecker(awayScore) + "   " + activeGameChecker(gameStatus, gameTime))
-  console.log(" " + possessionHome(possession, homeTeam) + " " + (nameLengthChecker(homeTeam)) + scoreChecker(homeScore) + "   " + downAndYardsMaker(currentDown, yardsRemaining))
+  console.log(" " + possessionAway(teamInPossession, awayTeam) + " " + (nameLengthChecker(awayTeam)) + scoreChecker(awayScoreTotal) + "   " + activeGameChecker(playedStatus, startTime))
+  console.log(" " + possessionHome(teamInPossession, homeTeam) + " " + (nameLengthChecker(homeTeam)) + scoreChecker(homeScoreTotal) + "   " + downAndYardsMaker(currentDown, currentYardsRemaining))
 }
 
 let query = rp.get(queryUrlBuilder(url), {
