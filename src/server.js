@@ -43,7 +43,7 @@ const queryUrlBuilder = url => {
 //********************************************
 
 const asciiMapper = ({ games, teamsWithByes }) => {
-  games.forEach(gameHandler)
+  (games.forEach(gameHandler))
   console.log(`+----------------------+`)
   console.log("On Byes: ", teamsWithByesPrinter(teamsWithByes))
 };
@@ -125,8 +125,7 @@ const gameHandler = game => {
   } = game
 
 
-  console.log(" " + possessionAway(teamInPossession, awayTeam) + " " + (nameLengthChecker(awayTeam)) + scoreChecker(awayScoreTotal) + "   " + activeGameChecker(playedStatus, startTime, currentQuarter, currentQuarterSecondsRemaining))
-  console.log(" " + possessionHome(teamInPossession, homeTeam) + " " + (nameLengthChecker(homeTeam)) + scoreChecker(homeScoreTotal) + "   " + downAndYardsMaker(currentDown, currentYardsRemaining))
+  console.log(" " + possessionAway(teamInPossession, awayTeam) + " " + (nameLengthChecker(awayTeam)) + scoreChecker(awayScoreTotal) + "   " + activeGameChecker(playedStatus, startTime, currentQuarter, currentQuarterSecondsRemaining)+ '\n' + " " + possessionHome(teamInPossession, homeTeam) + " " + (nameLengthChecker(homeTeam)) + scoreChecker(homeScoreTotal) + "   " + downAndYardsMaker(currentDown, currentYardsRemaining))
 }
 
 let query = rp.get(queryUrlBuilder(url), {
