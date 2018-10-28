@@ -43,7 +43,7 @@ const queryUrlBuilder = url => {
 
 const asciiMapper = ({ games, teamsWithByes }) => {
   games.forEach(gameHandler)
-  console.log(`+-------------------+`)
+  console.log(`+----------------------+`)
   console.log("On Byes: ", teamsWithByesPrinter(teamsWithByes))
 };
 
@@ -62,16 +62,32 @@ const scoreChecker = score => {
 
 const activeGameChecker = (gameStatus, startTime, currentQuarter, currentQuarterSecondsRemaining) => {
   return (gameStatus === "UNPLAYED") ? (gameDateMaker(startTime))
-    : (gameStatus === "LIVE") ? (currentQuarter + "Q" + "  " + moment(currentQuarterSecondsRemaining).format('sss, mm:ss'))
-    : "F"
+    : (gameStatus === "LIVE") ? (currentQuarter + "Q" + "  " + timeConverter(currentQuarterSecondsRemaining))
+    : "Final"
 }
 
 const gameDateMaker = date => {
   return moment(date).format('ddd ha').toLowerCase()
 }
 
+const downOrdinalMaker = (currentDown, yardsRemaining) => {
+  return (currentDown === 1) ? currentDown + "st & " + yardsRemaining
+    : (currentDown === 2) ? currentDown + "nd & " + yardsRemaining
+    : (currentDown === 3) ? currentDown + "rd & " + yardsRemaining
+    : (currentDown === 4) ? currentDown + "th & " + yardsRemaining
+    : (currentDown === 0) ? "intermission"
+    : ""
+}
+
+const timeConverter = currentQuarterSecondsRemaining => {
+  const minutes = currentQuarterSecondsRemaining / 60;
+  let seconds = currentQuarterSecondsRemaining % 60;
+  (seconds < 10) ? seconds = `0${seconds}` : seconds
+  return `${Math.trunc(minutes)}:${seconds}`
+}
+
 const downAndYardsMaker = (currentDown, yardsRemaining) => {
-  return (currentDown !== null ? `${currentDown} & ${yardsRemaining}` : "")
+  return (currentDown !== null  ? `${downOrdinalMaker(currentDown, yardsRemaining)}` : "")
 }
 
 const teamsWithByesPrinter = teamsWithByes => {
@@ -79,11 +95,13 @@ const teamsWithByesPrinter = teamsWithByes => {
 }
 
 const possessionAway = (possession, awayTeam) => {
-  return (possession === awayTeam ? String.fromCharCode(187) : " ")
+  const teamPoss = possession && possession.abbreviation
+  return (teamPoss === awayTeam ? String.fromCharCode(187) : " ")
 }
 
 const possessionHome = (possession, homeTeam) => {
-  return (possession === homeTeam ? String.fromCharCode(187) : " ")
+  const teamPoss = possession && possession.abbreviation
+  return (teamPoss === homeTeam ? String.fromCharCode(187) : " ")
 }
 
 const gameHandler = game => {
@@ -101,12 +119,11 @@ const gameHandler = game => {
       currentQuarterSecondsRemaining,
       currentDown,
       currentYardsRemaining,
-      lineOfScrimmage,
       teamInPossession
     }
   } = game
 
-  console.log(`+-------------------+`)
+  console.log(`+----------------------+`)
   console.log(" " + possessionAway(teamInPossession, awayTeam) + " " + (nameLengthChecker(awayTeam)) + scoreChecker(awayScoreTotal) + "   " + activeGameChecker(playedStatus, startTime, currentQuarter, currentQuarterSecondsRemaining))
   console.log(" " + possessionHome(teamInPossession, homeTeam) + " " + (nameLengthChecker(homeTeam)) + scoreChecker(homeScoreTotal) + "   " + downAndYardsMaker(currentDown, currentYardsRemaining))
 }
