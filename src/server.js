@@ -10,18 +10,18 @@ const morgan = require("morgan");
 const apiKey = process.env.API_KEY;
 const password = process.env.PASSWORD;
 
-const differenceInCalendarISOWeeks = require('date-fns/difference_in_calendar_iso_weeks');
+const differenceInCalendarISOWeeks = require("date-fns/difference_in_calendar_iso_weeks");
 
-let outputString = " *** nothing yet *** "
+let outputString = " *** nothing yet *** ";
 
 app.set("view engine", "ejs");
 
 //********************************************
 
 const asciiMapper = ({ games, teamsWithByes }) => {
-  games.forEach(gameHandler);
-  console.log(`+----------------------+`);
-   console.log("On Byes: ", teamsWithByesPrinter(teamsWithByes));
+  return `${games.forEach(gameHandler)}  ${teamsWithByesPrinter(
+    teamsWithByes
+  )}`;
 };
 
 const nameLengthChecker = name => {
@@ -35,8 +35,8 @@ const scoreChecker = score => {
   return score === null
     ? " 0"
     : score.toString().length === 1
-      ? " " + score
-      : score;
+    ? " " + score
+    : score;
 };
 
 const activeGameChecker = (
@@ -48,11 +48,11 @@ const activeGameChecker = (
   return gameStatus === "UNPLAYED"
     ? gameDateMaker(startTime)
     : gameStatus === "LIVE"
-      ? currentQuarter +
-        "Q" +
-        "  " +
-        timeConverter(currentQuarterSecondsRemaining)
-      : "Final";
+    ? currentQuarter +
+      "Q" +
+      "  " +
+      timeConverter(currentQuarterSecondsRemaining)
+    : "Final";
 };
 
 const gameDateMaker = date => {
@@ -65,14 +65,14 @@ const downOrdinalMaker = (currentDown, yardsRemaining) => {
   return currentDown === 1
     ? currentDown + "st & " + yardsRemaining
     : currentDown === 2
-      ? currentDown + "nd & " + yardsRemaining
-      : currentDown === 3
-        ? currentDown + "rd & " + yardsRemaining
-        : currentDown === 4
-          ? currentDown + "th & " + yardsRemaining
-          : currentDown === 0
-            ? "intermission"
-            : "";
+    ? currentDown + "nd & " + yardsRemaining
+    : currentDown === 3
+    ? currentDown + "rd & " + yardsRemaining
+    : currentDown === 4
+    ? currentDown + "th & " + yardsRemaining
+    : currentDown === 0
+    ? "intermission"
+    : "";
 };
 
 const timeConverter = currentQuarterSecondsRemaining => {
@@ -89,7 +89,9 @@ const downAndYardsMaker = (currentDown, yardsRemaining) => {
 };
 
 const teamsWithByesPrinter = teamsWithByes => {
-  return teamsWithByes ? teamsWithByes.map(x => x.abbreviation).toString() : "";
+  return teamsWithByes
+    ? `${teamsWithByes.map(x => x.abbreviation).toString()}`
+    : "";
 };
 
 const possessionAway = (possession, awayTeam) => {
@@ -148,8 +150,11 @@ const gameHandler = game => {
 };
 
 //********************************************
-const currentWeek = differenceInCalendarISOWeeks(new Date(), new Date(2018,8,5))
-const url = `https://api.mysportsfeeds.com/v2.0/pull/nfl/current/week/${currentWeek}/games.json`
+const currentWeek = differenceInCalendarISOWeeks(
+  new Date(),
+  new Date(2018, 8, 5)
+);
+const url = `https://api.mysportsfeeds.com/v2.0/pull/nfl/current/week/${currentWeek}/games.json`;
 
 let query = rp.get(url, {
   auth: {
@@ -162,17 +167,14 @@ let query = rp.get(url, {
 const mySportsFeedsApiCall = async query => {
   try {
     let result = await rp(query);
-    let storage = await (JSON.parse(result.replace(/\\"/g, '"')))
-    return await asciiMapper(storage)
-  }
-  catch (e) {
+    let storage = await JSON.parse(result.replace(/\\"/g, '"'));
+    return await asciiMapper(storage);
+  } catch (e) {
     return console.error("*** ERROR in Node Server Async Call ***", e);
   }
-
 };
 
-mySportsFeedsApiCall(query)
-
+mySportsFeedsApiCall(query);
 
 //********************************************
 
