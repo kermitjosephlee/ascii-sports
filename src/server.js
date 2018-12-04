@@ -162,10 +162,8 @@ const mySportsFeedsApiCall = async query => {
 
   try {
     let result = await rp(query);
-
-    let storage = JSON.stringify(result)
-    console.log(JSON.parse(storage.replace(/\\/g, '')))
-    // asciiMapper(JSON.parse(storage));
+    let storage = (JSON.parse(result.replace(/\\"/g, '"')))
+    asciiMapper(storage);
   }
   catch (e) {
     return console.error("*** ERROR in Node Server Async Call ***", e);
