@@ -10,7 +10,9 @@ const morgan = require("morgan");
 const apiKey = process.env.API_KEY;
 const password = process.env.PASSWORD;
 
-const differenceInCalendarISOWeeks = require('date-fns/difference_in_calendar_iso_weeks')
+const differenceInCalendarISOWeeks = require('date-fns/difference_in_calendar_iso_weeks');
+
+let outputString = " *** nothing yet *** "
 
 app.set("view engine", "ejs");
 
@@ -19,7 +21,7 @@ app.set("view engine", "ejs");
 const asciiMapper = ({ games, teamsWithByes }) => {
   games.forEach(gameHandler);
   console.log(`+----------------------+`);
-  console.log("On Byes: ", teamsWithByesPrinter(teamsWithByes));
+   console.log("On Byes: ", teamsWithByesPrinter(teamsWithByes));
 };
 
 const nameLengthChecker = name => {
@@ -158,11 +160,10 @@ let query = rp.get(url, {
 });
 
 const mySportsFeedsApiCall = async query => {
-
   try {
     let result = await rp(query);
-    let storage = (JSON.parse(result.replace(/\\"/g, '"')))
-    return asciiMapper(storage);
+    let storage = await (JSON.parse(result.replace(/\\"/g, '"')))
+    return await asciiMapper(storage)
   }
   catch (e) {
     return console.error("*** ERROR in Node Server Async Call ***", e);
@@ -170,14 +171,15 @@ const mySportsFeedsApiCall = async query => {
 
 };
 
-mySportsFeedsApiCall(query);
+mySportsFeedsApiCall(query)
+
 
 //********************************************
 
 app.use(morgan("combined"));
 
 app.get("/", (req, res) => {
-  res.send(mySportsFeedsApiCall(query));
+  res.send(outputString);
 });
 
 console.log(`Server is listening on localhost:${PORT}`);
