@@ -3,7 +3,6 @@ const dotenv = require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const https = require("https");
-const url = "https://api.mysportsfeeds.com/v2.0/pull/nfl";
 const request = require("request");
 const rp = require("request-promise");
 const moment = require("moment");
@@ -148,9 +147,9 @@ const gameHandler = game => {
 
 //********************************************
 const currentWeek = differenceInCalendarISOWeeks(new Date(), new Date(2018,8,5))
-const testQuery = `https://api.mysportsfeeds.com/v2.0/pull/nfl/current/week/${currentWeek}/games.json`
+const url = `https://api.mysportsfeeds.com/v2.0/pull/nfl/current/week/${currentWeek}/games.json`
 
-let query = rp.get(testQuery, {
+let query = rp.get(url, {
   auth: {
     user: apiKey,
     pass: password,
@@ -163,11 +162,12 @@ const mySportsFeedsApiCall = async query => {
   try {
     let result = await rp(query);
     let storage = (JSON.parse(result.replace(/\\"/g, '"')))
-    asciiMapper(storage);
+    return asciiMapper(storage);
   }
   catch (e) {
     return console.error("*** ERROR in Node Server Async Call ***", e);
   }
+
 };
 
 mySportsFeedsApiCall(query);
