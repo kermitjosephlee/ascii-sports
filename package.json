@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/kermitjosephlee/ascii-sports#readme",
   "dependencies": {
+    "date-fns": "^1.29.0",
     "dotenv": "^6.1.0",
     "ejs": "^2.6.1",
     "express": "^4.16.3",

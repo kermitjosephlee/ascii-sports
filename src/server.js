@@ -11,40 +11,9 @@ const morgan = require("morgan");
 const apiKey = process.env.API_KEY;
 const password = process.env.PASSWORD;
 
+const differenceInCalendarISOWeeks = require('date-fns/difference_in_calendar_iso_weeks')
+
 app.set("view engine", "ejs");
-
-//********************************************
-
-const queryUrlBuilder = url => {
-  const currentNFLYear = moment().get("year");
-  const dayOfWeek = moment().day();
-
-  const seasonType = () => {
-    return moment().get("year") === 2018 ? "regular" : "playoff";
-  };
-
-  const weekNumberBuilder = () => {
-    return currentNFLYear === 2018 && dayOfWeek > 3
-      ? moment().get("week") - 35
-      : currentNFLYear === 2018 && dayOfWeek <= 3
-        ? moment().get("week") - 36
-        : currentNFLYear === 2019 && dayOfWeek > 3
-          ? moment().get("week") + 1
-          : moment().get("week") + 1;
-  };
-
-  let weekObj = {
-    currentNFLYear: moment().get("year"),
-    seasonType: seasonType(),
-    currentNFLWeek: weekNumberBuilder()
-  };
-  return (
-    url +
-    `/${weekObj.currentNFLYear}-${weekObj.seasonType}/week/${
-      weekObj.currentNFLWeek
-    }/games.json`
-  );
-};
 
 //********************************************
 
@@ -178,7 +147,8 @@ const gameHandler = game => {
 };
 
 //********************************************
-const testQuery = "https://api.mysportsfeeds.com/v2.0/pull/nfl/2018-regular/games.json"
+const currentWeek = differenceInCalendarISOWeeks(new Date(), new Date(2018,8,5))
+const testQuery = `https://api.mysportsfeeds.com/v2.0/pull/nfl/current/week/${currentWeek}/games.json`
 
 let query = rp.get(testQuery, {
   auth: {
@@ -193,9 +163,9 @@ const mySportsFeedsApiCall = async query => {
   try {
     let result = await rp(query);
 
-    let storage = JSON.stringify(result.trim())
-    console.log(JSON.parse(storage))
-    asciiMapper(JSON.parse(storage));
+    let storage = JSON.stringify(result)
+    console.log(JSON.parse(storage.replace(/\\/g, '')))
+    // asciiMapper(JSON.parse(storage));
   }
   catch (e) {
     return console.error("*** ERROR in Node Server Async Call ***", e);
