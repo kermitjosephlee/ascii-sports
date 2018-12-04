@@ -179,7 +179,7 @@ mySportsFeedsApiCall(query)
 app.use(morgan("combined"));
 
 app.get("/", (req, res) => {
-  res.send(outputString);
+  res.send(mySportsFeedsApiCall(query));
 });
 
 console.log(`Server is listening on localhost:${PORT}`);
