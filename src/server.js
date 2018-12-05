@@ -18,10 +18,12 @@ app.set("view engine", "ejs");
 
 //********************************************
 
-const asciiMapper = async ({ games, teamsWithByes }) => {
-  return await `${games.forEach(gameHandler)} **** ${teamsWithByesPrinter(
-    teamsWithByes
-  )}`;
+const asciiMapper = ({ games, teamsWithByes }) => {
+  return games;
+
+  // `${games.forEach(gameHandler)} **** ${teamsWithByesPrinter(
+  //   teamsWithByes
+  // )}`;
 };
 
 const nameLengthChecker = name => {
@@ -163,16 +165,15 @@ const mySportsFeedsApiCall = async query => {
   try {
     const result = await rp(query);
     const storage = await JSON.parse(result.replace(/\\"/g, '"'));
-    console.log(storage);
     const asciiMap = await asciiMapper(storage);
-    return asciiMap;
+    return console.log(asciiMap);
   } catch (e) {
     return console.error("*** ERROR in Node Server Async Call ***", e);
   }
 };
 
+// test rendering in server window
 mySportsFeedsApiCall(query);
-console.log(gameDateMaker("2018-12-04T01:15:00.000Z"));
 //********************************************
 
 app.use(morgan("combined"));
