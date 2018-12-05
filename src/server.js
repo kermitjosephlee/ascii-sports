@@ -19,11 +19,9 @@ app.set("view engine", "ejs");
 //********************************************
 
 const asciiMapper = ({ games, teamsWithByes }) => {
-  return games;
-
-  // `${games.forEach(gameHandler)} **** ${teamsWithByesPrinter(
-  //   teamsWithByes
-  // )}`;
+  return `${games.forEach(gameHandler)} **** ${teamsWithByesPrinter(
+    teamsWithByes
+  )}`;
 };
 
 const nameLengthChecker = name => {
