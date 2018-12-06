@@ -5,7 +5,8 @@
 ## Screenshot
 
 ![screenshot](./screenShot.png?raw=true "Screenshot")
-\nI'll get a better one once the games are live.
+
+I'll get a better one once the games are live.
 
 ### Installation & Use
 
@@ -13,7 +14,7 @@
 - install dependencies using *npm install*
 - create an ./.env file with your API key from MySportsFeeds.com
 - start the server using *npm start*
-- in another terminal, use *curl localhost:3000* to get your cli scores\n
-
+- in another terminal, use *curl localhost:3000* to get your cli scores
+*********
 - inspired by [@igor_chubin](https://github.com/chubin) of wttr.in
 - Special thanks to [Brad Barkhouse](https://github.com/bradbarkhouse) at MySportsFeeds.com
