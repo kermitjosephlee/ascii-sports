@@ -8,21 +8,18 @@ const rp = require("request-promise");
 const morgan = require("morgan");
 const apiKey = process.env.API_KEY;
 const password = process.env.PASSWORD;
+const testObj = JSON.parse(process.env.TEST_OBJ);
 
-const differenceInCalendarISOWeeks = require("date-fns/difference_in_calendar_iso_weeks");
+const differenceInDays = require("date-fns/difference_in_days");
 const format = require("date-fns/format");
 
 let outputString = " *** nothing yet *** ";
 
+console.log(testObj);
+
 app.set("view engine", "ejs");
 
 //********************************************
-
-const asciiMapper = ({ games, teamsWithByes }) => {
-  return `${games.forEach(gameHandler)} **** ${teamsWithByesPrinter(
-    teamsWithByes
-  )}`;
-};
 
 const nameLengthChecker = name => {
   if (name === "LA") {
@@ -89,7 +86,7 @@ const downAndYardsMaker = (currentDown, yardsRemaining) => {
 const teamsWithByesPrinter = teamsWithByes => {
   return teamsWithByes
     ? `${teamsWithByes.map(x => x.abbreviation).toString()}`
-    : "";
+    : "teams with byes";
 };
 
 const possessionAway = (possession, awayTeam) => {
@@ -102,6 +99,22 @@ const possessionHome = (possession, homeTeam) => {
   return teamPoss === homeTeam ? String.fromCharCode(187) : " ";
 };
 
+// takes the JSON object from mySportsFeedsApiCall, object destructures games and teamsWithByes from the obj
+// and loops gameHandler function on it to return a long string called result
+const asciiMapper = obj => {
+  //   const { games, teamsWithByes } = obj;
+  //   return new Promise((resolve, reject) => {
+  //     const resultStr = games.forEach(gameHandler);
+  //     resolve(resultStr);
+  //   });
+  // };
+  const { games, teamsWithByes } = obj;
+  const result = JSON.parse(games);
+  // .forEach(gameHandler);
+  return result;
+};
+
+// takes an object called game from asciiMapper and destructures the appropriate variables from the object
 const gameHandler = game => {
   const {
     schedule: {
@@ -121,32 +134,14 @@ const gameHandler = game => {
     }
   } = game;
 
-  const scoreStr = `+----------------------+${"\n"}  ${possessionAway(
-    teamInPossession,
-    awayTeam
-  )} ${nameLengthChecker(awayTeam)} ${scoreChecker(
-    awayScoreTotal
-  )}   ${activeGameChecker(
-    playedStatus,
-    startTime,
-    currentQuarter,
-    currentQuarterSecondsRemaining
-  )}${"\n"}  ${possessionHome(teamInPossession, homeTeam)} ${nameLengthChecker(
-    homeTeam
-  )} ${scoreChecker(homeScoreTotal)}   ${activeGameChecker(
-    playedStatus,
-    startTime,
-    currentQuarter,
-    currentQuarterSecondsRemaining
-  )}${"\n"}`;
+  const scoreStr = `awayTeam: ${awayTeam}`;
 
   return scoreStr;
 };
 
 //********************************************
-const currentWeek = differenceInCalendarISOWeeks(
-  new Date(),
-  new Date(2018, 8, 5)
+const currentWeek = Math.round(
+  (differenceInDays(new Date(), new Date(2018, 8, 2)) + 0.5) / 7
 );
 
 const url = `https://api.mysportsfeeds.com/v2.0/pull/nfl/current/week/${currentWeek}/games.json`;
@@ -162,22 +157,25 @@ const query = rp.get(url, {
 const mySportsFeedsApiCall = async query => {
   try {
     const result = await rp(query);
-    const storage = await JSON.parse(result.replace(/\\"/g, '"'));
+    const storage = JSON.parse(result.replace(/\\"/g, '"'));
     const asciiMap = await asciiMapper(storage);
-    return console.log(asciiMap);
+    console.log(asciiMap);
+    return;
   } catch (e) {
-    return console.error("*** ERROR in Node Server Async Call ***", e);
+    console.error("*** ERROR in Node Server Async Call ***", e);
   }
 };
 
 // test rendering in server window
-mySportsFeedsApiCall(query);
+// mySportsFeedsApiCall(query);
+
 //********************************************
 
 app.use(morgan("combined"));
 
 app.get("/", (req, res) => {
-  res.send(mySportsFeedsApiCall(query));
+  res.send(asciiMapper(testObj));
+  // mySportsFeedsApiCall(query).then(result => res.send(result));
 });
 
 console.log(`Server is listening on localhost:${PORT}`);
