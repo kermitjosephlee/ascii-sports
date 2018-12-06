@@ -26,8 +26,6 @@
     "morgan": "^1.9.1",
     "node-fetch": "^2.3.0",
     "nodemon": "^1.18.4",
-    "request": "^2.88.0",
-    "request-promise": "^4.2.2",
     "tinycolor2": "^1.4.1"
   },
   "devDependencies": {

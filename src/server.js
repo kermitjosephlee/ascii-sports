@@ -116,27 +116,29 @@ const asciiMapper = jsonObj => {
 };
 
 // takes an object called game from asciiMapper and destructures the appropriate variables from the object
-const gameHandler = game => {
-  const {
-    schedule: {
-      awayTeam: { abbreviation: awayTeam },
-      homeTeam: { abbreviation: homeTeam },
-      playedStatus,
-      startTime
-    },
-    score: {
-      awayScoreTotal,
-      homeScoreTotal,
-      currentQuarter,
-      currentQuarterSecondsRemaining,
-      currentDown,
-      currentYardsRemaining,
-      teamInPossession
-    }
-  } = game;
+const gameHandler = games => {
+  let scoreStr = "";
+  for (i in games) {
+    const {
+      schedule: {
+        awayTeam: { abbreviation: awayTeam },
+        homeTeam: { abbreviation: homeTeam },
+        playedStatus,
+        startTime
+      },
+      score: {
+        awayScoreTotal,
+        homeScoreTotal,
+        currentQuarter,
+        currentQuarterSecondsRemaining,
+        currentDown,
+        currentYardsRemaining,
+        teamInPossession
+      }
+    } = games[i];
 
-  const scoreStr = `awayTeam: ${awayTeam}`;
-
+    scoreStr = `awayTeam: ${awayTeam}${"\n"}` + `${scoreStr}`;
+  }
   return scoreStr;
 };
 
@@ -152,7 +154,8 @@ const auth = { headers: { Authorization: `Basic ${encoded}` } };
 fetch(url, auth)
   .then(result => result.json())
   .then(json => asciiMapper(json))
-  .then(mapperReturn => console.log(mapperReturn + "MAPPER RETURN!!"))
+  .then(mapperReturn => gameHandler(mapperReturn))
+  .then(handlerReturn => console.log(handlerReturn))
   .catch(error => console.error("*** Fetch Error ***", error.message));
 
 // const query = rp.get(url, {
