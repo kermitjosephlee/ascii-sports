@@ -5,6 +5,9 @@ const PORT = process.env.PORT || 3000;
 const https = require("https");
 const request = require("request");
 const rp = require("request-promise");
+const fetch = require("node-fetch");
+const base64 = require("base-64");
+
 const morgan = require("morgan");
 const apiKey = process.env.API_KEY;
 const password = process.env.PASSWORD;
@@ -13,9 +16,7 @@ const testObj = JSON.parse(process.env.TEST_OBJ);
 const differenceInDays = require("date-fns/difference_in_days");
 const format = require("date-fns/format");
 
-let outputString = " *** nothing yet *** ";
-
-console.log(testObj);
+// console.log(testObj);
 
 app.set("view engine", "ejs");
 
@@ -101,17 +102,17 @@ const possessionHome = (possession, homeTeam) => {
 
 // takes the JSON object from mySportsFeedsApiCall, object destructures games and teamsWithByes from the obj
 // and loops gameHandler function on it to return a long string called result
-const asciiMapper = obj => {
-  //   const { games, teamsWithByes } = obj;
-  //   return new Promise((resolve, reject) => {
-  //     const resultStr = games.forEach(gameHandler);
-  //     resolve(resultStr);
-  //   });
+const asciiMapper = jsonObj => {
+  const { games, teamsWithByes } = jsonObj;
+  // return new Promise((resolve, reject) => {
+  //   const resultStr = games.forEach(gameHandler);
+  //   resolve(resultStr);
+  // });
+  //   return console.log("jsonObj: ", jsonObj);
   // };
-  const { games, teamsWithByes } = obj;
-  const result = JSON.parse(games);
-  // .forEach(gameHandler);
-  return result;
+
+  // const result = games.forEach(gameHandler);
+  return games;
 };
 
 // takes an object called game from asciiMapper and destructures the appropriate variables from the object
@@ -145,26 +146,34 @@ const currentWeek = Math.round(
 );
 
 const url = `https://api.mysportsfeeds.com/v2.0/pull/nfl/current/week/${currentWeek}/games.json`;
+const encoded = base64.encode(`${apiKey}:${password}`);
+const auth = { headers: { Authorization: `Basic ${encoded}` } };
 
-const query = rp.get(url, {
-  auth: {
-    user: apiKey,
-    pass: password,
-    sendImmediately: true
-  }
-});
+fetch(url, auth)
+  .then(result => result.json())
+  .then(json => asciiMapper(json))
+  .then(mapperReturn => console.log(mapperReturn + "MAPPER RETURN!!"))
+  .catch(error => console.error("*** Fetch Error ***", error.message));
 
-const mySportsFeedsApiCall = async query => {
-  try {
-    const result = await rp(query);
-    const storage = JSON.parse(result.replace(/\\"/g, '"'));
-    const asciiMap = await asciiMapper(storage);
-    console.log(asciiMap);
-    return;
-  } catch (e) {
-    console.error("*** ERROR in Node Server Async Call ***", e);
-  }
-};
+// const query = rp.get(url, {
+//   auth: {
+//     user: apiKey,
+//     pass: password,
+//     sendImmediately: true
+//   }
+// });
+//
+// const mySportsFeedsApiCall = async query => {
+//   try {
+//     const result = await rp(query);
+//     const storage = await JSON.parse(result.replace(/\\"/g, '"'));
+//     const asciiMap = await asciiMapper(storage);
+//     console.log(asciiMap);
+//     return;
+//   } catch (e) {
+//     console.error("*** ERROR in Node Server Async Call ***", e);
+//   }
+// };
 
 // test rendering in server window
 // mySportsFeedsApiCall(query);
