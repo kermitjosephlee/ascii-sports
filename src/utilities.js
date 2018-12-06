@@ -1,5 +1,12 @@
 const format = require("date-fns/format");
 
+const NUM_SUFFIXES = {
+  1: "st",
+  2: "nd",
+  3: "rd",
+  4: "th"
+}
+
 module.exports = {
   scoreChecker: score => {
     return score === null
@@ -9,17 +16,10 @@ module.exports = {
       : score;
   },
   downOrdinalMaker: (currentDown, yardsRemaining) => {
-    return currentDown === 1
-      ? currentDown + "st & " + yardsRemaining
-      : currentDown === 2
-      ? currentDown + "nd & " + yardsRemaining
-      : currentDown === 3
-      ? currentDown + "rd & " + yardsRemaining
-      : currentDown === 4
-      ? currentDown + "th & " + yardsRemaining
-      : currentDown === 0
-      ? "intermission"
-      : "";
+    if (currentDown === 0) return "intermission"
+    if (!currentDown) return ""
+
+    return `${NUM_SUFFIXES[currentDown]} & ${yardsRemaining}`;
   },
   downAndYardsMaker: (currentDown, yardsRemaining) => {
     return currentDown !== null

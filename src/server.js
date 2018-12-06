@@ -86,10 +86,8 @@ const auth = { headers: { Authorization: `Basic ${encoded}` } };
 app.use(morgan("combined"));
 
 app.get("/", (req, res) => {
-  console.log("REQ RECEIVED");
    fetch(url, auth)
   .then(body => {
-    console.log("BODY RECEIVED")
     return body.json();
   })
   .then(json => {
@@ -97,8 +95,6 @@ app.get("/", (req, res) => {
     res.send(scoreString);
   })
   .catch(error => console.error("*** Fetch Error ***", error));
-
-  console.log("REQ HANDLED");
 });
 
 console.log(
