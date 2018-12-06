@@ -5,26 +5,27 @@ const NUM_SUFFIXES = {
   2: "nd",
   3: "rd",
   4: "th"
-}
+};
 
 module.exports = {
   scoreChecker: score => {
-    if (score === null) return " 0"
-    if (score.toString().length === 1) return " " + score
-    return score
+    if (score === null) return " 0";
+    if (score.toString().length === 1) return " " + score;
+    return score;
   },
   downOrdinalMaker: (currentDown, yardsRemaining) => {
-    if (currentDown === 0) return "intermission"
-    if (!currentDown) return ""
+    if (currentDown === 0) return "intermission";
+    if (!currentDown) return "";
     return `${NUM_SUFFIXES[currentDown]} & ${yardsRemaining}`;
   },
   downAndYardsMaker: (currentDown, yardsRemaining) => {
-    if (currentDown !== null) return `${this.downOrdinalMaker(currentDown, yardsRemaining)}`
+    if (currentDown !== null)
+      return `${this.downOrdinalMaker(currentDown, yardsRemaining)}`;
     return "";
   },
   nameLengthChecker: name => {
-    if (name === "LA") return "LAR "
-    if (name.length === 2) return name + "  "
+    if (name === "LA") return "LAR ";
+    if (name.length === 2) return name + "  ";
     return name + " ";
   },
   timeConverter: currentQuarterSecondsRemaining => {
@@ -34,8 +35,11 @@ module.exports = {
     return `${Math.trunc(minutes)}:${seconds}`;
   },
   teamsWithByesPrinter: teamsWithByes => {
-    if (teamsWithByes.length !== 0) return `\nteams on bye: ${teamsWithByes.map(x => x.abbreviation).toString()}`
-    return `\n  no teams on bye\n`;
+    if (teamsWithByes.length !== 0)
+      return `\nteams on bye: ${teamsWithByes
+        .map(x => x.abbreviation)
+        .toString()}`;
+    return `\n teams on bye: none\n`;
   },
   gameDateMaker: date => {
     return format(date, "ddd ha");
