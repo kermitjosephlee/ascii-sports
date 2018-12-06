@@ -35,7 +35,6 @@ const activeGameChecker = (
 
 const scoreStringMaker = json => {
   const { games, teamsWithByes } = json;
-  let scoreStr = "";
   const scoreTable = new Table({
     head: ["  Away", "  Home", "Status"],
     colWidths: [13, 13, 30]
@@ -96,6 +95,55 @@ const scoreStringMaker = json => {
   );
 };
 
+const scoreHTMLMaker = json => {
+  const { games, teamsWithByes } = json;
+  let tempStr = ""
+
+  for(i in games) {
+    const {
+      schedule: {
+        awayTeam: { abbreviation: awayTeam },
+        homeTeam: { abbreviation: homeTeam },
+        playedStatus,
+        startTime
+      },
+      score: {
+        awayScoreTotal,
+        homeScoreTotal,
+        currentQuarter,
+        currentQuarterSecondsRemaining,
+        currentDown,
+        currentYardsRemaining,
+        teamInPossession
+      }
+    } = games[i];
+
+    tempStr = tempStr +
+    `<div>${(awayTeam)} ${util.scoreChecker(awayScoreTotal)}  -  ${util.scoreChecker(homeScoreTotal)} ${(homeTeam)} ${activeGameChecker(
+      playedStatus,
+      startTime,
+      currentQuarter,
+      currentQuarterSecondsRemaining
+    )} ${util.downAndYardsMaker(currentDown, currentYardsRemaining)}</div>`
+
+
+  }
+
+  let htmlStr = `
+  <!DOCTYPEhtml>
+  <html>
+    <head>
+      <h1>NFL Week ${currentWeek}</h1>
+    </head>
+    <body>
+      ${tempStr}
+    </body>
+  </html>
+  `
+
+  return htmlStr
+}
+
 //********************************************
 const currentWeek = Math.round(
   (differenceInDays(new Date(), new Date(2018, 8, 2)) + 0.5) / 7
@@ -110,15 +158,23 @@ const auth = { headers: { Authorization: `Basic ${encoded}` } };
 app.use(morgan("combined"));
 
 app.get("/", (req, res) => {
-  fetch(url, auth)
-    .then(body => {
-      return body.json();
-    })
-    .then(json => {
-      const scoreString = scoreStringMaker(json);
-      res.send(scoreString);
-    })
-    .catch(error => console.error("*** Fetch Error ***", error));
+  const userAgent = req.headers['user-agent'].toLowerCase().replace(/[^a-z]/g, "")
+  console.log('*** NOT MORGAN *** User-Agent: ' + userAgent)
+    fetch(url, auth)
+      .then(body => {
+        return body.json();
+      })
+      .then(json => {
+        if (userAgent === "curl"){
+          const scoreString = scoreStringMaker(json);
+          res.send(scoreString);
+        } else {
+          const scoreString = scoreHTMLMaker(json)
+          res.send(scoreString);
+        }
+
+      })
+      .catch(error => console.error("*** Fetch Error ***", error));
 });
 
 console.log(
