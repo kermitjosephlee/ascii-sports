@@ -2,6 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv").config();
 const app = express();
 const PORT = process.env.PORT || 3000;
+
 const https = require("https");
 const fetch = require("node-fetch");
 const base64 = require("base-64");
@@ -101,5 +102,7 @@ app.get("/", (req, res) => {
   // mySportsFeedsApiCall(url, auth).then(result => res.send(result));
 });
 
-console.log(`Server is listening on localhost:${PORT}`);
+console.log(
+  `Server is listening on localhost:${PORT}${"\n"}Started at ${new Date()}`
+);
 app.listen(PORT);
