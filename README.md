@@ -5,7 +5,8 @@
 ## Screenshot
 
 ![screenshot-cli](./images/screenShot-cli.png?raw=true "Screenshot CLIs")
-![screenshot-html](.images/screenShot-html.png?raw=true "Screenshot HTML")
+
+![screenshot-html](./images/screenShot-html.png?raw=true "Screenshot HTML")
 
 I'll get a better ones once the games are live.
 

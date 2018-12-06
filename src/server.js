@@ -33,6 +33,12 @@ const activeGameChecker = (
   return "Final";
 };
 
+const downAndYardsMaker = (currentDown, yardsRemaining) => {
+  if (currentDown !== null)
+    return `${util.downOrdinalMaker(currentDown, yardsRemaining)}`;
+  return "";
+},
+
 const scoreStringMaker = json => {
   const { games, teamsWithByes } = json;
   const scoreTable = new Table({
@@ -159,7 +165,6 @@ app.use(morgan("combined"));
 
 app.get("/", (req, res) => {
   const userAgent = req.headers['user-agent'].toLowerCase().replace(/[^a-z]/g, "")
-  console.log('*** NOT MORGAN *** User-Agent: ' + userAgent)
     fetch(url, auth)
       .then(body => {
         return body.json();

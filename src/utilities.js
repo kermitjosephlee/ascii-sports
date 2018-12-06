@@ -54,11 +54,6 @@ module.exports = {
     if (!currentDown) return "";
     return `${NUM_SUFFIXES[currentDown]} & ${yardsRemaining}`;
   },
-  downAndYardsMaker: (currentDown, yardsRemaining) => {
-    if (currentDown !== null)
-      return `${this.downOrdinalMaker(currentDown, yardsRemaining)}`;
-    return "";
-  },
   nameLengthChecker: name => {
     if (name === "LA") return chalk.hex(`${teamColors[name]}`).bold(`${name}R `);
     if (name.length === 2) return chalk.hex(`${teamColors[name]}`).bold(`${name}`) + "  ";
