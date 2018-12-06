@@ -35,7 +35,7 @@ module.exports = {
   },
   teamsWithByesPrinter: teamsWithByes => {
     if (teamsWithByes.length !== 0) return `\nteams on bye: ${teamsWithByes.map(x => x.abbreviation).toString()}`
-    return `\nno teams on bye`;
+    return `\n  no teams on bye\n`;
   },
   gameDateMaker: date => {
     return format(date, "ddd ha");
