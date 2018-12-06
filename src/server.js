@@ -69,7 +69,7 @@ const scoreStringMaker = json => {
       )} ${util.downAndYardsMaker(currentDown, currentYardsRemaining)}${"\n"}`;
   }
 
-  return scoreStr + `${util.teamsWithByesPrinter(teamsWithByes)}`;
+  return scoreStr + `${util.teamsWithByesPrinter(teamsWithByes)} \n`;
 };
 
 //********************************************
@@ -81,25 +81,24 @@ const url = `https://api.mysportsfeeds.com/v2.0/pull/nfl/current/week/${currentW
 const encoded = base64.encode(`${apiKey}:${password}`);
 const auth = { headers: { Authorization: `Basic ${encoded}` } };
 
-const mySportsFeedsApiCall = (url, auth) => {
-  fetch(url, auth)
-    .then(result => result.json())
-    .then(json => scoreStringMaker(json))
-    .then(scoreStr => console.log(scoreStr))
-    .catch(error => console.error("*** Fetch Error ***", error));
-};
-
-// test rendering in server window
-mySportsFeedsApiCall(url, auth);
-
 //********************************************
 
 app.use(morgan("combined"));
 
 app.get("/", (req, res) => {
-  res.send(mySportsFeedsApiCall(url, auth));
-  // res.send(mySportsFeedsApiCall(url, auth));
-  // mySportsFeedsApiCall(url, auth).then(result => res.send(result));
+  console.log("REQ RECEIVED");
+   fetch(url, auth)
+  .then(body => {
+    console.log("BODY RECEIVED")
+    return body.json();
+  })
+  .then(json => {
+    const scoreString = scoreStringMaker(json);
+    res.send(scoreString);
+  })
+  .catch(error => console.error("*** Fetch Error ***", error));
+
+  console.log("REQ HANDLED");
 });
 
 console.log(
