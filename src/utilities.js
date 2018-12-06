@@ -60,7 +60,7 @@ module.exports = {
     return "";
   },
   nameLengthChecker: name => {
-    if (name === "LA") return chalk.hex(`${teamColors[name]}`).bold(`${name}R`);
+    if (name === "LA") return chalk.hex(`${teamColors[name]}`).bold(`${name}R `);
     if (name.length === 2) return chalk.hex(`${teamColors[name]}`).bold(`${name}`) + "  ";
     return chalk.hex(`${teamColors[name]}`).bold(`${name}`) + " ";
   },
