@@ -20,14 +20,9 @@ const activeGameChecker = (
   currentQuarter,
   currentQuarterSecondsRemaining
 ) => {
-  return gameStatus === "UNPLAYED"
-    ? util.gameDateMaker(startTime)
-    : gameStatus === "LIVE"
-    ? currentQuarter +
-      "Q" +
-      "  " +
-      util.timeConverter(currentQuarterSecondsRemaining)
-    : "Final";
+  if (gameStatus === "UNPLAYED") return util.gameDateMaker(startTime)
+  if (gameStatus === "LIVE") return currentQuarter + "Q" + "  " + util.timeConverter(currentQuarterSecondsRemaining)
+  return "Final";
 };
 
 const scoreStringMaker = json => {
@@ -66,10 +61,10 @@ const scoreStringMaker = json => {
         startTime,
         currentQuarter,
         currentQuarterSecondsRemaining
-      )} ${util.downAndYardsMaker(currentDown, currentYardsRemaining)}${"\n"}`;
+      )} ${util.downAndYardsMaker(currentDown, currentYardsRemaining)}\n`;
   }
 
-  return scoreStr + `${util.teamsWithByesPrinter(teamsWithByes)} \n`;
+  return `\nNFL Week ${currentWeek}\n` + scoreStr + `  ${util.teamsWithByesPrinter(teamsWithByes)} \n`;
 };
 
 //********************************************
@@ -77,7 +72,8 @@ const currentWeek = Math.round(
   (differenceInDays(new Date(), new Date(2018, 8, 2)) + 0.5) / 7
 );
 
-const url = `https://api.mysportsfeeds.com/v2.0/pull/nfl/current/week/${currentWeek}/games.json`;
+// const url = `https://api.mysportsfeeds.com/v2.0/pull/nfl/current/week/${currentWeek}/games.json`;
+const url = `https://api.mysportsfeeds.com/v2.0/pull/nfl/current/week/14/games.json`;
 const encoded = base64.encode(`${apiKey}:${password}`);
 const auth = { headers: { Authorization: `Basic ${encoded}` } };
 
@@ -98,6 +94,6 @@ app.get("/", (req, res) => {
 });
 
 console.log(
-  `Server is listening on localhost:${PORT}${"\n"}Started at ${new Date()}`
+  `Server is listening on localhost:${PORT}$\nStarted at ${new Date()}`
 );
 app.listen(PORT);
