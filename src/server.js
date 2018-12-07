@@ -130,7 +130,7 @@ const scoreHTMLMaker = json => {
       startTime,
       currentQuarter,
       currentQuarterSecondsRemaining
-    )} ${util.downAndYardsMaker(currentDown, currentYardsRemaining)}</div>`
+    )} ${downAndYardsMaker(currentDown, currentYardsRemaining)}</div>`
 
 
   }
