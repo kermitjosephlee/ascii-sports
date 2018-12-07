@@ -37,7 +37,7 @@ const downAndYardsMaker = (currentDown, yardsRemaining) => {
   if (currentDown !== null)
     return `${util.downOrdinalMaker(currentDown, yardsRemaining)}`;
   return "";
-},
+}
 
 const scoreStringMaker = json => {
   const { games, teamsWithByes } = json;
@@ -88,7 +88,7 @@ const scoreStringMaker = json => {
         startTime,
         currentQuarter,
         currentQuarterSecondsRemaining
-      )} ${util.downAndYardsMaker(currentDown, currentYardsRemaining)}`
+      )} ${downAndYardsMaker(currentDown, currentYardsRemaining)}`
     );
 
     scoreTable.push(tableRow);
