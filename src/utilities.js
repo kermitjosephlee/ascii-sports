@@ -52,7 +52,7 @@ module.exports = {
   downOrdinalMaker: (currentDown, yardsRemaining) => {
     if (currentDown === 0) return "intermission";
     if (!currentDown) return "";
-    return `${NUM_SUFFIXES[currentDown]} & ${yardsRemaining}`;
+    return `${currentDown}${NUM_SUFFIXES[currentDown]} & ${yardsRemaining}`;
   },
   nameLengthChecker: name => {
     if (name === "LA") return chalk.hex(`${teamColors[name]}`).bold(`${name}R `);
@@ -73,7 +73,7 @@ module.exports = {
     return `\n teams on bye: none\n`;
   },
   gameDateMaker: date => {
-    return format(date, "ddd ha");
+    return format(date, "ddd hmma");
   },
   possessionAway: (possession, awayTeam) => {
     const teamPoss = possession && possession.abbreviation;
@@ -81,6 +81,6 @@ module.exports = {
   },
   possessionHome: (possession, homeTeam) => {
     const teamPoss = possession && possession.abbreviation;
-    return teamPoss === homeTeam ? String.fromCharCode(60) : " ";
+    return teamPoss === homeTeam ? String.fromCharCode(62) : " ";
   }
 };
