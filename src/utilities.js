@@ -74,7 +74,7 @@ module.exports = {
     return `\n teams on bye: none\n`;
   },
   gameDateMaker: date => {
-    date = subHours(date, -5)
+    date = subHours(date, +5)
     return format(date, "ddd hmma");
   },
   possessionAway: (possession, awayTeam) => {
