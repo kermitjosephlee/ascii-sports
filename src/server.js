@@ -142,6 +142,12 @@ const scoreHTMLMaker = json => {
   <!DOCTYPEhtml>
   <html>
     <head>
+      <style>
+        html {
+          font-family: Courier;
+          background-color: honeydew;
+        }
+      </style>
       <h1>NFL Week ${currentWeek}</h1>
     </head>
     <body>
