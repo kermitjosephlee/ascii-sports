@@ -5,7 +5,10 @@
 ## Screenshot
 
 ![screenshot-cli](./images/screenShot-cli.png?raw=true "Screenshot CLIs")
+<<<<<<< HEAD
 
+=======
+>>>>>>> c9b1a1f0e3c4b944fa42caac84b24af794404304
 ![screenshot-html](./images/screenShot-html.png?raw=true "Screenshot HTML")
 
 I'll get a better ones once the games are live.
