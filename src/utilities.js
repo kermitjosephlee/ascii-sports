@@ -1,4 +1,5 @@
 const format = require("date-fns/format");
+var subHours = require('date-fns/sub_hours')
 const chalk = require("chalk");
 
 const NUM_SUFFIXES = {
@@ -73,7 +74,8 @@ module.exports = {
     return `\n teams on bye: none\n`;
   },
   gameDateMaker: date => {
-    return format(date, "ddd hmmaZ");
+    date = subHours(date, -5)
+    return format(date, "ddd hmma");
   },
   possessionAway: (possession, awayTeam) => {
     const teamPoss = possession && possession.abbreviation;
