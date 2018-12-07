@@ -73,7 +73,7 @@ module.exports = {
     return `\n teams on bye: none\n`;
   },
   gameDateMaker: date => {
-    return format(date, "ddd hmma");
+    return format(date, "ddd hmmaZ");
   },
   possessionAway: (possession, awayTeam) => {
     const teamPoss = possession && possession.abbreviation;
