@@ -1,5 +1,5 @@
 const format = require("date-fns/format");
-var subHours = require('date-fns/sub_hours')
+const subHours = require('date-fns/sub_hours')
 const chalk = require("chalk");
 
 const NUM_SUFFIXES = {
@@ -74,7 +74,8 @@ module.exports = {
     return `\n teams on bye: none\n`;
   },
   gameDateMaker: date => {
-    date = subHours(date, +5)
+    // GMT timezone adjustment, necessary for Heroku deployment
+    // date = subHours(date, +5)
     return format(date, "ddd hmma");
   },
   possessionAway: (possession, awayTeam) => {
