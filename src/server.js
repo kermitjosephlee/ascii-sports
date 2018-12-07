@@ -125,12 +125,15 @@ const scoreHTMLMaker = json => {
     } = games[i];
 
     tempStr = tempStr +
-    `<div>${(awayTeam)} ${util.scoreChecker(awayScoreTotal)}  -  ${util.scoreChecker(homeScoreTotal)} ${(homeTeam)} ${activeGameChecker(
+    `<tr>
+      <td width="100">${(awayTeam)} ${util.scoreChecker(awayScoreTotal)}</td>
+      <td width="100">${(homeTeam)} ${util.scoreChecker(homeScoreTotal)}</td>
+      <td>${activeGameChecker(
       playedStatus,
       startTime,
       currentQuarter,
       currentQuarterSecondsRemaining
-    )} ${downAndYardsMaker(currentDown, currentYardsRemaining)}</div>`
+    )} ${downAndYardsMaker(currentDown, currentYardsRemaining)}</td></tr>`
 
 
   }
@@ -142,7 +145,14 @@ const scoreHTMLMaker = json => {
       <h1>NFL Week ${currentWeek}</h1>
     </head>
     <body>
+      <table width="600">
+        <tr align="left">
+          <th>Away</th>
+          <th>Home</th>
+          <th>Status</th>
+        </tr>
       ${tempStr}
+      </table>
     </body>
   </html>
   `
