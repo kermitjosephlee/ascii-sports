@@ -6,8 +6,6 @@
 
 ![screenshot-cli](./images/screenShot-cli.png?raw=true "Screenshot CLIs")
 
-I'll get a better ones once the games are live.
-
 ### Installation & Use
 
 - fork or clone the repo
