@@ -171,7 +171,7 @@ const nbaScoreStringMaker = json => {
   const { games } = json
 
   const scoreTable = new Table({
-    head: [' Away', ' Head', ' Status'],
+    head: [' Away', ' Home', ' Status'],
     colWidths: [13, 13, 50]
   })
 
