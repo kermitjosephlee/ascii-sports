@@ -45,7 +45,7 @@ const scoreStringMaker = json => {
   const { games, teamsWithByes } = json
   const scoreTable = new Table({
     head: ['  Away', '  Home', 'Status'],
-    colWidths: [13, 13, 30]
+    colWidths: [13, 13, 50]
   })
 
   for (i in games) {
