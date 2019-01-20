@@ -4,16 +4,33 @@
 
 ## Screenshot
 
-![screenshot-cli](./images/screenShot-cli.png?raw=true "Screenshot CLIs")
+![screenshot-cli](./images/screenShot-cli.png?raw=true 'Screenshot CLIs')
 
-### Installation & Use
+### Installation
 
 - fork or clone the repo
-- install dependencies using _npm install_
+- install dependencies using **npm install**
 - create an ./.env file with your API key from MySportsFeeds.com
-- start the server using _npm start_
-- in another terminal, use _curl localhost:3000_ to get your cli scores
-- open your favorite browser - _localhost:3000_
+- start the server using **npm start**
+
+### Use
+
+#### Local Deployment
+
+- in another terminal, use **curl localhost:3000** to get your cli scores
+- open your favorite browser - **localhost:3000**
+
+#### Heroku - **_www.asciisports.com_**
+
+Available Endpoints:
+
+- **/** - root - shows NFL scores by default
+- **/nfl** - NFL scores
+- **/nba** - NBA scores
+
+#### Example
+
+> \$curl www.asciisports.com/nba
 
 ---
 
