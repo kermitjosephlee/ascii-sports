@@ -12,6 +12,7 @@ const chalk = require('chalk')
 const apiKey = process.env.API_KEY
 const password = process.env.PASSWORD
 const differenceInDays = require('date-fns/difference_in_days')
+const subDays = require('date-fns/sub_days')
 const format = require('date-fns/format')
 const util = require('./utilities.js')
 
@@ -331,7 +332,11 @@ const encoded = base64.encode(`${apiKey}:${password}`)
 const auth = { headers: { Authorization: `Basic ${encoded}` } }
 
 const currentNBADay = format(new Date(), 'YYYYMMDD')
-const urlNBA = `http://data.nba.net/10s/prod/v1/${currentNBADay}/scoreboard.json`
+const yesterdayNBADay = format(subDays(new Date(), 1), 'YYYYMMDD')
+
+const nbaUrlMaker = date => {
+  return `http://data.nba.net/10s/prod/v1/${date}/scoreboard.json`
+}
 
 //********************************************
 
@@ -357,11 +362,31 @@ app.get('/', (req, res) => {
     .catch(error => console.error('*** NFL Fetch Error ***', error))
 })
 
+app.get('/nfl', (req, res) => {
+  const userAgent = req.headers['user-agent']
+    .toLowerCase()
+    .replace(/[^a-z]/g, '')
+  fetch(urlNFL, auth)
+    .then(body => {
+      return body.json()
+    })
+    .then(json => {
+      if (userAgent === 'curl') {
+        const scoreString = scoreStringMaker(json)
+        res.send(scoreString)
+      } else {
+        const scoreString = scoreHTMLMaker(json)
+        res.send(scoreString)
+      }
+    })
+    .catch(error => console.error('*** NFL Fetch Error ***', error))
+})
+
 app.get('/nba', (req, res) => {
   const userAgent = req.headers['user-agent']
     .toLowerCase()
     .replace(/[^a-z]/g, '')
-  fetch(urlNBA)
+  fetch(nbaUrlMaker(currentNBADay))
     .then(res => {
       return res.json()
     })
