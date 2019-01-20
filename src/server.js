@@ -12,6 +12,7 @@ const chalk = require("chalk");
 const apiKey = process.env.API_KEY;
 const password = process.env.PASSWORD;
 const differenceInDays = require("date-fns/difference_in_days");
+const format = require('date-fns/format');
 const util = require("./utilities.js");
 
 //********************************************
@@ -95,7 +96,7 @@ const scoreStringMaker = json => {
   }
 
   return (
-    `\n  NFL Week ${currentWeek}\n\n` +
+    `\n  NFL Week ${currentNFLWeek}\n\n` +
     scoreTable.toString() +
     `${util.teamsWithByesPrinter(teamsWithByes)} \n`
   );
@@ -148,7 +149,7 @@ const scoreHTMLMaker = json => {
           background-color: honeydew;
         }
       </style>
-      <h1>NFL Week ${currentWeek}</h1>
+      <h1>NFL Week ${currentNFLWeek}</h1>
     </head>
     <body>
       <table width="600">
@@ -165,15 +166,87 @@ const scoreHTMLMaker = json => {
 
   return htmlStr
 }
+//********************************************
+
+const nbaScoreStringMaker = json => {
+  const { games } = json
+
+  const scoreTable = new Table({
+    head: [" Away", " Head", " Status"],
+    colWidths: [13, 13, 30]
+  })
+
+  
+
+  for (i in games){
+    const {
+      isGameActivated,
+      clock,
+      endTimeUTC,
+      vTeam: {
+        triCode: awayTeam,
+        score: awayScore
+      },
+      hTeam: {
+        triCode: homeTeam,
+        score: homeScore
+      },
+      startTimeEastern: startTime,
+      period: {
+        current: currentQuarter,
+        maxRegular,
+        isEndOfPeriod
+      }
+    } = games[i]
+
+    const isActive = (
+      isGameActivated,
+      startTime,
+      clock,
+      currentQuarter,
+      maxRegular,
+      isEndOfPeriod,
+      endTimeUTC) => {
+
+        if (isGameActivated) {
+          return `${clock}  ${currentQuarter}Q`
+         
+        } else {
+          if (endTimeUTC) {
+            return `Final`
+          } else {
+            return `${startTime}`
+          }
+        }
+      }
+
+    let tableRow = []
+    tableRow.push(
+      ` ${awayTeam} ${awayScore}`
+    );
+    tableRow.push(
+      ` ${homeTeam} ${homeScore}`
+    );
+    tableRow.push(
+      ` ${isActive(isGameActivated, startTime, clock, currentQuarter, maxRegular, isEndOfPeriod, endTimeUTC)}`
+    )
+    scoreTable.push(tableRow)
+  }
+  return scoreTable.toString()
+}
+
 
 //********************************************
-const currentWeek = Math.round(
+const currentNFLWeek = Math.round(
   (differenceInDays(new Date(), new Date(2018, 8, 2)) + 0.5) / 7
 );
 
-const url = `https://api.mysportsfeeds.com/v2.0/pull/nfl/current/week/${currentWeek}/games.json`;
+const urlNFL = `https://api.mysportsfeeds.com/v2.0/pull/nfl/current/week/${currentNFLWeek}/games.json`;
 const encoded = base64.encode(`${apiKey}:${password}`);
 const auth = { headers: { Authorization: `Basic ${encoded}` } };
+
+const currentNBADay = format(new Date(), 'YYYYMMDD')
+const urlNBA = `http://data.nba.net/10s/prod/v1/${currentNBADay}/scoreboard.json`
 
 //********************************************
 
@@ -181,7 +254,7 @@ app.use(morgan("combined"));
 
 app.get("/", (req, res) => {
   const userAgent = req.headers['user-agent'].toLowerCase().replace(/[^a-z]/g, "")
-    fetch(url, auth)
+    fetch(urlNFL, auth)
       .then(body => {
         return body.json();
       })
@@ -195,8 +268,26 @@ app.get("/", (req, res) => {
         }
 
       })
-      .catch(error => console.error("*** Fetch Error ***", error));
+      .catch(error => console.error("*** NFL Fetch Error ***", error));
 });
+
+app.get("/nba", (req, res) => {
+  const userAgent = req.headers['user-agent'].toLowerCase().replace(/[^a-z]/g, "")
+  fetch(urlNBA)
+    .then(res => {
+      return res.json()
+    })
+    .then(json => {
+      if (userAgent === 'curl'){
+        const scoreString = nbaScoreStringMaker(json)
+        res.send(scoreString)
+      } else {
+        res.send("NBA")
+      }
+    })
+    .catch(error => console.error("*** NBA Fetch Error ***", error))
+
+})
 
 console.log(
   `Server is listening on localhost:${PORT}$\nStarted at ${new Date()}`
